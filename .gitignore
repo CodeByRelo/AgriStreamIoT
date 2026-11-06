@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+**/local.settings.json
+**/appsettings.Development.json
+**/appsettings.*.json
+**/publish/
+**/Publish/
+.vs/
+.idea/
+*.user
+*.suo
+*.publishsettings
+**/Properties/PublishProfiles/
+**/Properties/ServiceDependencies/
