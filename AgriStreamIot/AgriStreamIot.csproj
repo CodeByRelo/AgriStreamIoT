@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0</ContainerBaseImage>
+    <UserSecretsId>51b2cb97-77c4-49b2-a322-f4fef1831c48</UserSecretsId>
+    <DockerfileContext>.</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ContainerPort Include="8081" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.13.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.30.1" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.28.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
+  </ItemGroup>
+
+</Project>

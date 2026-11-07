@@ -1,0 +1,810 @@
+﻿@model AgriStreamIoT.ViewModels.DashboardViewModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Dashboard";
+
+    var onlinePercentage = Model.TotalDevices > 0
+        ? (int)Math.Round((double)Model.OnlineDevices / Model.TotalDevices * 100)
+        : 0;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - AgriStream IoT</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet" />
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+            :root {
+                --green: #244d35;
+                --dark-green: #183d2b;
+                --lime: #a5c957;
+                --background: #f5f7f2;
+                --muted: #7b867e;
+            }
+
+            body {
+                margin: 0;
+                background: var(--background);
+                color: #29372e;
+                font-family: Arial, sans-serif;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: 250px;
+                background: var(--dark-green);
+                color: white;
+                padding: 28px 18px;
+                display: flex;
+                flex-direction: column;
+                z-index: 1000;
+            }
+
+            .brand {
+                font-size: 21px;
+                font-weight: 800;
+                padding: 0 12px;
+                margin-bottom: 42px;
+            }
+
+                .brand i {
+                    color: var(--lime);
+                    margin-right: 8px;
+                }
+
+            .sidebar-label {
+                color: #aab9ad;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                padding: 0 12px;
+                margin-bottom: 12px;
+            }
+
+            .sidebar-link {
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                color: #d6e0d8;
+                text-decoration: none;
+                padding: 13px 14px;
+                border-radius: 9px;
+                margin-bottom: 6px;
+                font-size: 14px;
+                transition: 0.2s ease;
+            }
+
+                .sidebar-link:hover,
+                .sidebar-link.active {
+                    background: #315b40;
+                    color: white;
+                }
+
+                .sidebar-link.active {
+                    border-left: 3px solid var(--lime);
+                }
+
+                .sidebar-link i {
+                    width: 18px;
+                    text-align: center;
+                }
+
+            .sidebar-bottom {
+                margin-top: auto;
+                border-top: 1px solid rgba(255,255,255,0.13);
+                padding: 20px 10px 0;
+            }
+
+            .user-name {
+                font-size: 13px;
+                font-weight: 700;
+                color: white;
+            }
+
+            .user-role {
+                color: #b4c5b8;
+                font-size: 11px;
+                margin-top: 3px;
+            }
+
+            .logout-button {
+                color: #d6e0d8;
+                border: 0;
+                background: transparent;
+                padding: 12px 0 0;
+                font-size: 13px;
+            }
+
+                .logout-button:hover {
+                    color: var(--lime);
+                }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 34px 38px;
+            }
+
+            .topbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 34px;
+            }
+
+            .page-title {
+                color: var(--dark-green);
+                font-size: 27px;
+                font-weight: 800;
+                margin-bottom: 6px;
+            }
+
+            .page-subtitle {
+                color: var(--muted);
+                font-size: 14px;
+                margin: 0;
+            }
+
+            .date-label {
+                color: var(--muted);
+                font-size: 13px;
+            }
+
+            .welcome-panel {
+                background: var(--green);
+                color: white;
+                border-radius: 16px;
+                padding: 27px 30px;
+                margin-bottom: 28px;
+                position: relative;
+                overflow: hidden;
+            }
+
+                .welcome-panel h2 {
+                    font-size: 22px;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                }
+
+                .welcome-panel p {
+                    color: #d4e2d7;
+                    font-size: 14px;
+                    margin: 0;
+                    max-width: 620px;
+                    line-height: 1.6;
+                }
+
+            .welcome-icon {
+                position: absolute;
+                right: 35px;
+                top: 15px;
+                font-size: 90px;
+                color: rgba(255,255,255,0.09);
+            }
+
+            .section-heading {
+                color: var(--dark-green);
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 16px;
+            }
+
+            .stat-card {
+                height: 100%;
+                background: white;
+                border: 1px solid #e9eee8;
+                border-radius: 13px;
+                padding: 21px;
+            }
+
+            .stat-top {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 18px;
+            }
+
+            .stat-icon {
+                width: 43px;
+                height: 43px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 11px;
+                font-size: 18px;
+            }
+
+            .icon-green {
+                background: #e9f2e9;
+                color: #347448;
+            }
+
+            .icon-lime {
+                background: #f0f5df;
+                color: #789b2c;
+            }
+
+            .icon-orange {
+                background: #fff0e5;
+                color: #d17a3d;
+            }
+
+            .icon-grey {
+                background: #edf0ed;
+                color: #66736a;
+            }
+
+            .stat-label {
+                color: var(--muted);
+                font-size: 13px;
+                margin-bottom: 7px;
+            }
+
+            .stat-value {
+                color: var(--dark-green);
+                font-size: 29px;
+                font-weight: 800;
+            }
+
+            .stat-note {
+                color: #98a29a;
+                font-size: 11px;
+                margin-top: 5px;
+            }
+
+            .content-card {
+                background: white;
+                border: 1px solid #e9eee8;
+                border-radius: 13px;
+                padding: 23px;
+                height: 100%;
+            }
+
+            .table {
+                margin-bottom: 0;
+                vertical-align: middle;
+            }
+
+                .table thead th {
+                    color: #879188;
+                    font-size: 11px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    border-bottom: 1px solid #edf0ec;
+                    padding: 13px 10px;
+                }
+
+                .table tbody td {
+                    color: #47544b;
+                    font-size: 13px;
+                    padding: 15px 10px;
+                    border-bottom: 1px solid #f0f2ef;
+                }
+
+                .table tbody tr:last-child td {
+                    border-bottom: 0;
+                }
+
+            .device-id {
+                color: var(--dark-green);
+                font-weight: 700;
+            }
+
+            .status {
+                display: inline-block;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 700;
+            }
+
+            .status-online {
+                color: #287344;
+                background: #e8f5eb;
+            }
+
+            .status-offline {
+                color: #bd633e;
+                background: #fff0e9;
+            }
+
+            .status-other {
+                color: #68756c;
+                background: #edf0ed;
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 35px 15px;
+                color: var(--muted);
+            }
+
+                .empty-state i {
+                    font-size: 30px;
+                    color: #a5b3a7;
+                    margin-bottom: 12px;
+                }
+
+                .empty-state h5 {
+                    color: var(--dark-green);
+                    font-size: 15px;
+                    font-weight: 700;
+                }
+
+            .monitoring-card {
+                background: white;
+                border: 1px solid #e9eee8;
+                border-radius: 13px;
+                padding: 23px;
+                height: 100%;
+            }
+
+            .progress {
+                height: 9px;
+                background: #edf1eb;
+                border-radius: 10px;
+            }
+
+            .progress-bar {
+                background: var(--lime);
+                border-radius: 10px;
+            }
+
+            .monitoring-description {
+                color: var(--muted);
+                font-size: 13px;
+                line-height: 1.6;
+            }
+
+            .footer {
+                color: #9aa49c;
+                font-size: 11px;
+                margin-top: 30px;
+                text-align: center;
+            }
+
+            @@media (max-width: 991px) {
+                .sidebar {
+                    width: 75px;
+                    padding: 25px 10px;
+                }
+
+                .brand {
+                    font-size: 0;
+                    text-align: center;
+                    padding: 0;
+                }
+
+                    .brand i {
+                        font-size: 23px;
+                        margin: 0;
+                    }
+
+                .sidebar-label,
+                .sidebar-link span,
+                .sidebar-bottom .user-details,
+                .logout-button span {
+                    display: none;
+                }
+
+                .sidebar-link {
+                    justify-content: center;
+                    padding: 14px 5px;
+                }
+
+                    .sidebar-link i {
+                        font-size: 17px;
+                    }
+
+                .sidebar-bottom {
+                    text-align: center;
+                }
+
+                .main-content {
+                    margin-left: 75px;
+                    padding: 28px 22px;
+                }
+            }
+
+            @@media (max-width: 576px) {
+                .main-content {
+                    padding: 22px 14px;
+                }
+
+                .topbar {
+                    align-items: flex-start;
+                    gap: 12px;
+                    flex-direction: column;
+                }
+
+                .page-title {
+                    font-size: 23px;
+                }
+
+                .welcome-panel {
+                    padding: 23px;
+                }
+
+                .welcome-icon {
+                    right: 15px;
+                    font-size: 65px;
+                }
+
+                .content-card {
+                    padding: 16px;
+                }
+            }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <i class="fa-solid fa-leaf"></i>
+            AgriStream <span class="fw-normal">IoT</span>
+        </div>
+
+        <div class="sidebar-label">WORKSPACE</div>
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="sidebar-link">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <div class="sidebar-label">FARM OPERATIONS</div>
+
+        <a asp-controller="Telemetry"
+           asp-action="Index"
+           class="sidebar-link">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Telemetry Monitoring</span>
+        </a>
+
+        <a asp-controller="DroneImages"
+           asp-action="Index"
+           class="sidebar-link">
+            <i class="fa-solid fa-helicopter"></i>
+            <span>Drone Images</span>
+        </a>
+
+        @if (User.IsInRole("Admin") || User.IsInRole("Farmer"))
+        {
+            <a asp-controller="Irrigation"
+               asp-action="Index"
+               class="sidebar-link">
+                <i class="fa-solid fa-droplet"></i>
+                <span>Irrigation Control</span>
+            </a>
+        }
+
+        <div class="sidebar-label">DEVICE MANAGEMENT</div>
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           asp-fragment="device-overview"
+           class="sidebar-link">
+            <i class="fa-solid fa-microchip"></i>
+            <span>Device Overview</span>
+        </a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="sidebar-label">ADMINISTRATION</div>
+
+            <a asp-controller="UserManagement"
+               asp-action="Index"
+               class="sidebar-link">
+                <i class="fa-solid fa-users"></i>
+                <span>User Management</span>
+            </a>
+        }
+
+        <div class="sidebar-bottom">
+
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="fa-solid fa-circle-user fa-lg text-light"></i>
+
+                <div class="user-details">
+                    <div class="user-name">
+                        @User.Identity?.Name
+                    </div>
+
+                    <div class="user-role">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <span>Administrator</span>
+                        }
+                        else if (User.IsInRole("Agronomist"))
+                        {
+                            <span>Agronomist</span>
+                        }
+                        else if (User.IsInRole("Farmer"))
+                        {
+                            <span>Farmer</span>
+                        }
+                        else
+                        {
+                            <span>User</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <form asp-controller="Account"
+                  asp-action="Logout"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <button type="submit" class="logout-button">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i>
+                    <span>Sign out</span>
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <div class="topbar">
+            <div>
+                <h1 class="page-title">Dashboard Overview</h1>
+                <p class="page-subtitle">
+                    Your agricultural operations at a glance.
+                </p>
+            </div>
+
+            <div class="date-label">
+                <i class="fa-regular fa-calendar me-2"></i>
+                @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+            </div>
+        </div>
+
+        <!-- WELCOME PANEL -->
+        <section class="welcome-panel">
+            <div class="position-relative" style="z-index: 1;">
+                <h2>Welcome back, @User.Identity?.Name!</h2>
+
+                <p>
+                    Monitor your farm infrastructure, keep track of connected
+                    devices and stay informed about your agricultural operations
+                    through AgriStream IoT.
+                </p>
+            </div>
+
+            <i class="fa-solid fa-seedling welcome-icon"></i>
+        </section>
+
+        <!-- DEVICE STATISTICS -->
+        <section class="mb-4">
+            <h3 class="section-heading">Device Statistics</h3>
+
+            <div class="row g-3">
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <div class="stat-icon icon-green">
+                                <i class="fa-solid fa-microchip"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-label">Total Devices</div>
+                        <div class="stat-value">@Model.TotalDevices</div>
+                        <div class="stat-note">Registered devices</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <div class="stat-icon icon-lime">
+                                <i class="fa-solid fa-wifi"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-label">Online Devices</div>
+                        <div class="stat-value">@Model.OnlineDevices</div>
+                        <div class="stat-note">Currently reporting online</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <div class="stat-icon icon-orange">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-label">Offline Devices</div>
+                        <div class="stat-value">@Model.OfflineDevices</div>
+                        <div class="stat-note">Devices not currently online</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <div class="stat-icon icon-grey">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-label">Monitored Fields</div>
+                        <div class="stat-value">@Model.TotalFields</div>
+                        <div class="stat-note">Fields with registered devices</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- DEVICE OVERVIEW AND MONITORING -->
+        <section id="device-overview">
+            <div class="row g-3">
+
+                <div class="col-12 col-xl-8">
+                    <div class="content-card">
+
+                        <h3 class="section-heading mb-3">
+                            <i class="fa-solid fa-list-ul me-2"></i>
+                            Recent Devices
+                        </h3>
+
+                        @if (Model.RecentDevices.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Device ID</th>
+                                            <th>Field</th>
+                                            <th>Status</th>
+                                            <th>Last Updated</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach (var device in Model.RecentDevices)
+                                        {
+                                            var statusClass =
+                                                device.OperationalStatus == "Online"
+                                                    ? "status-online"
+                                                    : device.OperationalStatus == "Offline"
+                                                        ? "status-offline"
+                                                        : "status-other";
+
+                                            <tr>
+                                                <td class="device-id">
+                                                    #@device.DeviceId
+                                                </td>
+
+                                                <td>@device.FieldId</td>
+
+                                                <td>
+                                                    <span class="status @statusClass">
+                                                        @device.OperationalStatus
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    @device.LastUpdated.ToLocalTime()
+                                                    .ToString("dd MMM yyyy, HH:mm")
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="empty-state">
+                                <i class="fa-solid fa-microchip d-block"></i>
+
+                                <h5>No devices registered yet</h5>
+
+                                <p class="small mb-0">
+                                    Registered farm devices will appear here
+                                    once they have been added to the system.
+                                </p>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                    <div class="monitoring-card">
+
+                        <h3 class="section-heading">
+                            <i class="fa-solid fa-chart-simple me-2"></i>
+                            Device Connectivity
+                        </h3>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary small">
+                                Online devices
+                            </span>
+
+                            <strong class="small">
+                                @onlinePercentage%
+                            </strong>
+                        </div>
+
+                        <div class="progress mb-3">
+                            <div class="progress-bar"
+                                 role="progressbar"
+                                 style="width: @onlinePercentage%;"
+                                 aria-valuenow="@onlinePercentage"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+
+                        <p class="monitoring-description">
+                            This indicator represents the percentage of
+                            registered devices currently marked as online.
+                        </p>
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-secondary small">
+                                Online
+                            </span>
+
+                            <strong class="small text-success">
+                                @Model.OnlineDevices
+                            </strong>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <span class="text-secondary small">
+                                Offline
+                            </span>
+
+                            <strong class="small text-danger">
+                                @Model.OfflineDevices
+                            </strong>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="footer">
+            &copy; @DateTime.Now.Year AgriStream IoT. Agricultural intelligence through connected technology.
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

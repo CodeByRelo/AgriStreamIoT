@@ -1,0 +1,94 @@
+﻿@model AgriStreamIoT.ViewModels.EditUserViewModel
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="container py-4" style="max-width: 650px;">
+
+    <div class="mb-4">
+        <a asp-action="Index" class="text-decoration-none text-muted">
+            <i class="fas fa-arrow-left me-2"></i>Back to users
+        </a>
+        <h2 class="fw-bold mt-3">Edit User</h2>
+        <p class="text-muted">Update account details and permissions.</p>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+
+                <input asp-for="UserId" type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label">Username</label>
+                    <input asp-for="Username" class="form-control" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Role" class="form-label">Account Role</label>
+                    <select asp-for="Role" class="form-select">
+                        <option value="Farmer">Farmer</option>
+                        <option value="Agronomist">Agronomist</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-dark">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <h5 class="fw-bold">Reset Password</h5>
+            <p class="text-muted small">
+                Set a new password for this account.
+            </p>
+
+            <form asp-action="ResetPassword" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="UserId" value="@Model.UserId" />
+
+                <div class="mb-3">
+                    <label class="form-label">New Password</label>
+                    <input type="password" name="Password"
+                           class="form-control" required minlength="12" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" name="ConfirmPassword"
+                           class="form-control" required minlength="12" />
+                </div>
+
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="fas fa-key me-2"></i>Reset Password
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
